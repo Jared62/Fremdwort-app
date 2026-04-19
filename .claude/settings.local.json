@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm create *)",
+      "Bash(npm --version)",
+      "Bash(npm install *)",
+      "Bash(curl -fsSL https://get.pnpm.io/install.sh)",
+      "Bash(sh -)",
+      "Bash(export PNPM_HOME=\"/Users/JP/Library/pnpm\")",
+      "Bash(export PATH=\"$PNPM_HOME:$PATH\")",
+      "Bash(pnpm --version)",
+      "Bash(pnpm add *)",
+      "Bash(pnpm dlx *)"
+    ]
+  }
+}
