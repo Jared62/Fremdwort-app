@@ -41,6 +41,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ sent: 0 });
   }
 
+  if (!process.env.RESEND_API_KEY) {
+    return NextResponse.json({ ok: true, sent: 0, reason: "RESEND_API_KEY not configured" });
+  }
+
+  const resend = new Resend(process.env.RESEND_API_KEY);
+
   // Get email addresses from auth.users via admin API
   let sent = 0;
   for (const profile of toRemind) {

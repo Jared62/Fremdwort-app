@@ -10,7 +10,17 @@
       "Bash(export PATH=\"$PNPM_HOME:$PATH\")",
       "Bash(pnpm --version)",
       "Bash(pnpm add *)",
-      "Bash(pnpm dlx *)"
+      "Bash(pnpm dlx *)",
+      "Bash(pnpm build *)",
+      "Bash(npx tsc *)",
+      "Bash(node_modules/.bin/tsc --noEmit)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(pkill -f \"next build\")",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(echo \"BUILD_EXIT:$?\")",
+      "Bash(echo \"---STATUS---$?\")",
+      "Bash(pkill -9 -f \"next build\")",
+      "Bash(pkill -9 -f \"next dev\")"
     ]
   }
 }
