@@ -1,36 +1,111 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Fremdwort — Täglich ein Wort
 
-## Getting Started
+Eine tägliche Lern-App für kuratierte Fremdwörter aus Geopolitik, Philosophie, Wirtschaft und mehr.
 
-First, run the development server:
+## Tech Stack
+
+- **Next.js 16** (App Router) + TypeScript
+- **Tailwind CSS** + shadcn/ui · Cinzel-Font · Cream-Design
+- **Supabase** (Auth + Datenbank)
+- **Resend** (E-Mail-Erinnerungen)
+- **Vercel** (Deployment + Cron Jobs)
+
+---
+
+## Setup
+
+### 1. Abhängigkeiten installieren
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Supabase-Projekt erstellen
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Gehe zu [supabase.com](https://supabase.com) und erstelle ein neues Projekt
+2. **SQL Editor** → Inhalt von `supabase/migrations/001_initial.sql` einfügen → **Run**
+3. Kopiere unter **Project Settings → API**:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY` (Service Role — geheim halten!)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 3. Environment Variables
 
-## Learn More
+```bash
+cp .env.local.example .env.local
+# Werte ausfüllen
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 4. Lokal starten
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+pnpm dev
+# → http://localhost:3000
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Erster Start:** `/signup` → Bestätigungsmail klicken → Onboarding → Erstes Wort lernen.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Vercel Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 1. Projekt deployen
+
+```bash
+npm i -g vercel
+vercel
+```
+
+Oder Repository direkt auf [vercel.com/new](https://vercel.com/new) importieren.
+
+### 2. Environment Variables in Vercel
+
+Alle Werte aus `.env.local` im Vercel Dashboard eintragen. `NEXT_PUBLIC_APP_URL` auf die echte Domain setzen.
+
+### 3. Supabase Redirect URLs
+
+In Supabase → **Authentication → URL Configuration**:
+- Site URL: `https://deine-app.vercel.app`
+- Redirect URL: `https://deine-app.vercel.app/auth/callback`
+
+### 4. Google OAuth (optional)
+
+1. Google Cloud Console → OAuth 2.0 Client erstellen
+2. Redirect URI: `https://xxxx.supabase.co/auth/v1/callback`
+3. Client ID + Secret in Supabase → Authentication → Google eintragen
+
+### 5. E-Mail-Erinnerungen (optional)
+
+1. [resend.com](https://resend.com) → API-Key + Domain
+2. `RESEND_API_KEY` und `RESEND_FROM_EMAIL` setzen
+3. Cron-Jobs laufen automatisch via `vercel.json` (stündlich + täglich)
+
+---
+
+## Projektstruktur
+
+```
+app/
+  (auth)/           Login, Signup
+  (app)/            Hauptapp (Auth-geschützt)
+    page.tsx        Tägliches Wort
+    onboarding/     Einmaliges Onboarding (3 Schritte)
+    archive/        Alle gesehenen Wörter mit Filter/Suche
+    settings/       Interessen, Sprache, E-Mail-Reminder
+  api/              REST-Routen + Cron-Endpoints
+  auth/callback/    OAuth-Callback
+
+components/         WordCard, StreakCounter
+lib/                Supabase-Clients, Algorithmen
+data/words.json     300 kuratierte Fremdwörter
+supabase/           SQL-Migration
+```
+
+## Skripte
+
+```bash
+pnpm dev          # Dev-Server
+pnpm build        # Produktions-Build
+pnpm typecheck    # TypeScript prüfen
+pnpm lint         # ESLint
+```
